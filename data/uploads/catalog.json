@@ -1,0 +1,86 @@
+{
+  "doc_e2c222225921": {
+    "id": "doc_e2c222225921",
+    "filename": "employee_handbook.docx",
+    "original_path": "data\\uploads\\doc_e2c222225921_employee_handbook.docx",
+    "markdown_path": "data\\markdown\\doc_e2c222225921.md",
+    "file_type": ".docx",
+    "size_bytes": 37468,
+    "chunk_count": 4,
+    "created_at": "2026-09-08T05:23:14.866062+00:00",
+    "status": "embedded",
+    "error_message": null
+  },
+  "doc_f7c906f4c9cf": {
+    "id": "doc_f7c906f4c9cf",
+    "filename": "cloud_api_guide.pdf",
+    "original_path": "data\\uploads\\doc_f7c906f4c9cf_cloud_api_guide.pdf",
+    "markdown_path": "data\\markdown\\doc_f7c906f4c9cf.md",
+    "file_type": ".pdf",
+    "size_bytes": 2338,
+    "chunk_count": 1,
+    "created_at": "2026-09-08T05:23:20.237268+00:00",
+    "status": "embedded",
+    "error_message": null
+  },
+  "doc_93558bf7df3d": {
+    "id": "doc_93558bf7df3d",
+    "filename": "q3_financial_report.md",
+    "original_path": "data\\uploads\\doc_93558bf7df3d_q3_financial_report.md",
+    "markdown_path": "data\\markdown\\doc_93558bf7df3d.md",
+    "file_type": ".md",
+    "size_bytes": 892,
+    "chunk_count": 4,
+    "created_at": "2026-09-08T05:23:21.007995+00:00",
+    "status": "embedded",
+    "error_message": null
+  },
+  "doc_5a43e157ebc8": {
+    "id": "doc_5a43e157ebc8",
+    "filename": "employee_handbook.docx",
+    "original_path": "data\\uploads\\doc_5a43e157ebc8_employee_handbook.docx",
+    "markdown_path": "data\\markdown\\doc_5a43e157ebc8.md",
+    "file_type": ".docx",
+    "size_bytes": 37468,
+    "chunk_count": 4,
+    "created_at": "2026-09-08T05:24:18.914720+00:00",
+    "status": "embedded",
+    "error_message": null
+  },
+  "doc_6e1663ac26e9": {
+    "id": "doc_6e1663ac26e9",
+    "filename": "cloud_api_guide.pdf",
+    "original_path": "data\\uploads\\doc_6e1663ac26e9_cloud_api_guide.pdf",
+    "markdown_path": "data\\markdown\\doc_6e1663ac26e9.md",
+    "file_type": ".pdf",
+    "size_bytes": 2338,
+    "chunk_count": 1,
+    "created_at": "2026-09-08T05:24:21.045246+00:00",
+    "status": "embedded",
+    "error_message": null
+  },
+  "doc_7cf96492aa10": {
+    "id": "doc_7cf96492aa10",
+    "filename": "q3_financial_report.md",
+    "original_path": "data\\uploads\\doc_7cf96492aa10_q3_financial_report.md",
+    "markdown_path": "data\\markdown\\doc_7cf96492aa10.md",
+    "file_type": ".md",
+    "size_bytes": 892,
+    "chunk_count": 4,
+    "created_at": "2026-09-08T05:24:22.194187+00:00",
+    "status": "embedded",
+    "error_message": null
+  },
+  "doc_54e3589d7f38": {
+    "id": "doc_54e3589d7f38",
+    "filename": "Sample Business Report.pdf",
+    "original_path": "data\\uploads\\doc_54e3589d7f38_Sample Business Report.pdf",
+    "markdown_path": "data\\markdown\\doc_54e3589d7f38.md",
+    "file_type": ".pdf",
+    "size_bytes": 239915,
+    "chunk_count": 11,
+    "created_at": "2026-09-08T05:32:40.036133+00:00",
+    "status": "embedded",
+    "error_message": null
+  }
+}
