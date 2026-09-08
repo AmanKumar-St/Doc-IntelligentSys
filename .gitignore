@@ -57,3 +57,9 @@ out/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Runtime Data & Storage
+data/qdrant_db/
+data/markdown/doc_*
+data/uploads/doc_*
+

@@ -1,5 +1,4 @@
-import React from "react";
-import { User, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
+import { User, Sparkles, CheckCircle2, AlertTriangle, FileCode, ShieldCheck } from "lucide-react";
 import type { ChatMessage, Citation } from "../types";
 
 interface MessageItemProps {
@@ -49,10 +48,31 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, onCitationCli
           <div>{message.content}</div>
         ) : (
           <div>
+            {/* Task Badge header */}
+            {message.task_type && (
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "0.68rem", fontWeight: 700, padding: "2px 6px", background: "rgba(99, 102, 241, 0.2)", color: "var(--accent-indigo)", borderRadius: "4px", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+                Mode: {message.task_type}
+              </div>
+            )}
+
+            {/* Main Response Text */}
             <div style={{ lineHeight: 1.6 }}>
               {renderContentWithCitations(message.content)}
             </div>
 
+            {/* Structured JSON Output Box if present */}
+            {message.structured_data && (
+              <div style={{ marginTop: "0.85rem", background: "#090d16", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "0.85rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.75rem", fontWeight: 600, color: "var(--accent-blue)", marginBottom: "0.5rem" }}>
+                  <FileCode size={14} /> STRUCTURED JSON OUTPUT
+                </div>
+                <pre style={{ fontFamily: "JetBrains Mono, monospace", fontSize: "0.8rem", color: "#a7f3d0", overflowX: "auto", margin: 0 }}>
+                  {JSON.stringify(message.structured_data, null, 2)}
+                </pre>
+              </div>
+            )}
+
+            {/* Citations Footer */}
             {message.citations && message.citations.length > 0 && (
               <div className="citations-footer">
                 <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", alignSelf: "center", marginRight: "4px" }}>
@@ -70,6 +90,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, onCitationCli
               </div>
             )}
 
+            {/* Validation Metadata Status Bar */}
             <div className="message-meta">
               {message.provider && (
                 <span>Provider: {message.provider} ({message.model})</span>
@@ -77,15 +98,25 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, onCitationCli
               {message.chunks_used !== undefined && (
                 <span>• {message.chunks_used} chunks retrieved</span>
               )}
-              {message.validation_status === "valid" && (
-                <span style={{ display: "flex", alignItems: "center", gap: "3px", color: "var(--accent-emerald)" }}>
-                  <CheckCircle2 size={12} /> Citations verified
-                </span>
-              )}
-              {message.validation_status === "cleaned_invalid" && (
-                <span style={{ display: "flex", alignItems: "center", gap: "3px", color: "var(--accent-amber)" }}>
-                  <AlertTriangle size={12} /> Hallucinated tags filtered
-                </span>
+
+              {message.validation && (
+                <div style={{ display: "flex", gap: "8px", alignItems: "center", marginLeft: "auto" }}>
+                  {message.validation.structure_valid && (
+                    <span style={{ display: "flex", alignItems: "center", gap: "2px", color: "var(--accent-emerald)" }} title="Structure Validated">
+                      <ShieldCheck size={12} /> Format Valid
+                    </span>
+                  )}
+                  {message.validation.factuality_status === "supported" && (
+                    <span style={{ display: "flex", alignItems: "center", gap: "2px", color: "var(--accent-emerald)" }} title="Numerical and Factually Grounded">
+                      <CheckCircle2 size={12} /> Factually Grounded ({Math.round(message.validation.factuality_score * 100)}%)
+                    </span>
+                  )}
+                  {message.validation.factuality_status === "partially_supported" && (
+                    <span style={{ display: "flex", alignItems: "center", gap: "2px", color: "var(--accent-amber)" }} title="Partial Grounding Warning">
+                      <AlertTriangle size={12} /> Partial Grounding ({Math.round(message.validation.factuality_score * 100)}%)
+                    </span>
+                  )}
+                </div>
               )}
             </div>
           </div>

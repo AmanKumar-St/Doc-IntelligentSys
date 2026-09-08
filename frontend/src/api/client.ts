@@ -1,4 +1,4 @@
-import type { DocumentItem, SearchResult, SystemHealth } from "../types";
+import type { DocumentItem, SearchResult, SystemHealth, TaskRequestParams } from "../types";
 
 const API_BASE = "http://localhost:8000/api";
 
@@ -38,33 +38,41 @@ export async function deleteDocument(documentId: string): Promise<void> {
   if (!res.ok) throw new Error("Failed to delete document");
 }
 
+export async function executeTask(params: TaskRequestParams): Promise<{
+  task_type: string;
+  answer: string;
+  structured_data?: Record<string, any> | null;
+  citations: any[];
+  validation: any;
+  provider: string;
+  model: string;
+  chunks_used: number;
+  resolved_query?: string | null;
+}> {
+  const res = await fetch(`${API_BASE}/tasks`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Task execution failed" }));
+    throw new Error(err.detail || "Task execution failed");
+  }
+  return res.json();
+}
+
 export async function sendChatMessage(
   question: string,
   history: { role: string; content: string }[] = [],
   documentId?: string
-): Promise<{
-  answer: string;
-  citations: any[];
-  provider: string;
-  model: string;
-  chunks_used: number;
-  validation_status: string;
-}> {
-  const res = await fetch(`${API_BASE}/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      question,
-      history,
-      document_id: documentId || null,
-    }),
+): Promise<any> {
+  return executeTask({
+    task_type: "qa",
+    instruction: question,
+    history,
+    document_id: documentId,
   });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: "Chat request failed" }));
-    throw new Error(err.detail || "Chat request failed");
-  }
-  return res.json();
 }
 
 export async function semanticSearch(query: string, topK: number = 6, documentId?: string): Promise<SearchResult[]> {

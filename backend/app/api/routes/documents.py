@@ -18,9 +18,14 @@ async def upload_document(
     if not file.filename:
         raise HTTPException(status_code=400, detail="Filename is required")
 
+    # Sanitize filename to prevent path traversal
+    safe_filename = Path(file.filename).name.replace("..", "").replace("/", "").replace("\\", "").strip()
+    if not safe_filename:
+        safe_filename = "uploaded_document"
+
     temp_dir = Path("./data/uploads/tmp")
     temp_dir.mkdir(parents=True, exist_ok=True)
-    temp_path = temp_dir / file.filename
+    temp_path = temp_dir / safe_filename
 
     try:
         with open(temp_path, "wb") as buffer:

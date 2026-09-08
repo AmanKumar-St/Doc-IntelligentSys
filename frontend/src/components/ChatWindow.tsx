@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Send, Sparkles, AlertCircle, RefreshCw } from "lucide-react";
-import type { ChatMessage, Citation } from "../types";
+import type { ChatMessage, Citation, TaskType } from "../types";
 import { MessageItem } from "./MessageItem";
-import { sendChatMessage } from "../api/client";
+import { TaskControls } from "./TaskControls";
+import { executeTask } from "../api/client";
 
 interface ChatWindowProps {
   selectedDocId: string | null;
@@ -11,19 +12,25 @@ interface ChatWindowProps {
 
 const SAMPLE_PROMPTS = [
   "What is the annual leave allocation and carryover policy?",
-  "What is the reimbursement for home office and internet subsidy?",
-  "How does the Cloud API authentication and bearer token work?",
-  "What rate limit is enforced on the standard API tier?",
-  "What was the Q3 ARR and revenue growth across business segments?",
+  "Summarize the key leave and remote work benefits from the employee handbook.",
+  "Extract the annual leave days, carryover limit, and sick leave days as JSON.",
+  "Classify this document into HR Policy, Technical Spec, or Financial Report.",
+  "Generate an executive briefing report summarizing financial results.",
 ];
 
 export const ChatWindow: React.FC<ChatWindowProps> = ({ selectedDocId, onCitationClick }) => {
+  const [selectedTask, setSelectedTask] = useState<TaskType>("qa");
+  const [summaryType, setSummaryType] = useState<"concise" | "detailed" | "key_points">("detailed");
+  const [targetFields, setTargetFields] = useState("annual_leave_days, carryover_limit, sick_leave_days");
+  const [allowedCategories, setAllowedCategories] = useState("HR Policy, Technical Documentation, Financial Report, Other");
+  const [outputFormat, setOutputFormat] = useState("report");
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
       role: "assistant",
       content:
-        "Welcome to the Document Intelligence Assistant. Ask questions about your indexed documents, and I'll provide answers grounded strictly with verifiable citations [C1], [C2].",
+        "Welcome to the AI-Powered Generative Content & Document Intelligence Platform. Select a task mode above (Ask Question, Summarize, Extract, Classify, Generate Content) and enter your instruction.",
       timestamp: new Date().toISOString(),
     },
   ]);
@@ -47,6 +54,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ selectedDocId, onCitatio
       id: `user_${Date.now()}`,
       role: "user",
       content: query,
+      task_type: selectedTask,
       timestamp: new Date().toISOString(),
     };
 
@@ -58,23 +66,38 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ selectedDocId, onCitatio
         .filter((m) => m.id !== "welcome")
         .map((m) => ({ role: m.role, content: m.content }));
 
-      const res = await sendChatMessage(query, history, selectedDocId || undefined);
+      const fieldsArray = targetFields ? targetFields.split(",").map((s) => s.trim()).filter(Boolean) : undefined;
+      const catsArray = allowedCategories ? allowedCategories.split(",").map((s) => s.trim()).filter(Boolean) : undefined;
+
+      const res = await executeTask({
+        task_type: selectedTask,
+        instruction: query,
+        document_id: selectedDocId || undefined,
+        history,
+        summary_type: summaryType,
+        target_fields: fieldsArray,
+        allowed_categories: catsArray,
+        output_format: outputFormat,
+      });
 
       const assistantMessage: ChatMessage = {
         id: `asst_${Date.now()}`,
         role: "assistant",
         content: res.answer,
+        task_type: res.task_type as TaskType,
+        structured_data: res.structured_data,
         citations: res.citations,
+        validation: res.validation,
         provider: res.provider,
         model: res.model,
         chunks_used: res.chunks_used,
-        validation_status: res.validation_status,
+        resolved_query: res.resolved_query,
         timestamp: new Date().toISOString(),
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (err: any) {
-      setError(err.message || "Failed to generate answer");
+      setError(err.message || "Failed to execute task");
     } finally {
       setIsLoading(false);
     }
@@ -93,11 +116,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ selectedDocId, onCitatio
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <Sparkles size={18} color="var(--accent-blue)" />
           <span style={{ fontWeight: 600, fontSize: "0.95rem" }}>
-            Grounded Document Assistant
+            Generative Intelligence Studio
           </span>
           {selectedDocId && (
             <span style={{ fontSize: "0.75rem", padding: "2px 8px", background: "rgba(56, 189, 248, 0.15)", borderRadius: "4px", color: "var(--accent-blue)" }}>
-              Filtered to selected document
+              Filtered Document
             </span>
           )}
         </div>
@@ -107,9 +130,23 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ selectedDocId, onCitatio
           style={{ background: "transparent", border: "none", color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", fontSize: "0.75rem" }}
           title="Clear chat history"
         >
-          <RefreshCw size={12} /> Reset Chat
+          <RefreshCw size={12} /> Reset Workspace
         </button>
       </div>
+
+      {/* Task Controls Bar */}
+      <TaskControls
+        selectedTask={selectedTask}
+        onSelectTask={setSelectedTask}
+        summaryType={summaryType}
+        setSummaryType={setSummaryType}
+        targetFields={targetFields}
+        setTargetFields={setTargetFields}
+        allowedCategories={allowedCategories}
+        setAllowedCategories={setAllowedCategories}
+        outputFormat={outputFormat}
+        setOutputFormat={setOutputFormat}
+      />
 
       <div className="chat-messages">
         {messages.map((m) => (
@@ -123,7 +160,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ selectedDocId, onCitatio
             </div>
             <div className="message-content" style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-secondary)" }}>
               <div className="status-dot" style={{ animation: "pulse 1s infinite" }} />
-              Retrieving context, reranking passages, and validating citations...
+              Executing {selectedTask.toUpperCase()} task, parsing context, and running validation...
             </div>
           </div>
         )}
@@ -138,7 +175,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ selectedDocId, onCitatio
         {messages.length <= 2 && !isLoading && (
           <div style={{ marginTop: "1rem" }}>
             <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
-              Suggested questions to try:
+              Suggested task prompts:
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
               {SAMPLE_PROMPTS.map((prompt, idx) => (
@@ -180,7 +217,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ selectedDocId, onCitatio
           <textarea
             className="chat-textarea"
             rows={1}
-            placeholder="Ask a question about your documents... (Press Enter to send)"
+            placeholder={`Enter instruction for ${selectedTask.toUpperCase()} task... (Press Enter to execute)`}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -191,7 +228,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ selectedDocId, onCitatio
             onClick={() => handleSend()}
           >
             <Send size={16} />
-            <span>Send</span>
+            <span>Execute Task</span>
           </button>
         </div>
       </div>

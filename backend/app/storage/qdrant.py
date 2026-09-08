@@ -77,11 +77,15 @@ class QdrantStorage:
                 f"Mismatch: {len(chunks)} chunks vs {len(vectors)} vectors"
             )
 
+        import hashlib
+
         points: list[rest_models.PointStruct] = []
         for i, (chunk, vector) in enumerate(zip(chunks, vectors)):
+            # Deterministic 64-bit unsigned integer ID from MD5 hash
+            point_id = int(hashlib.md5(chunk.id.encode("utf-8")).hexdigest()[:15], 16)
             points.append(
                 rest_models.PointStruct(
-                    id=abs(hash(chunk.id)) % (2**63 - 1),  # Unsigned 64-bit int ID
+                    id=point_id,
                     vector=vector,
                     payload={
                         "chunk_id": chunk.id,

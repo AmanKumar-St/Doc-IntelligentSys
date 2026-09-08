@@ -1,0 +1,183 @@
+DOCUMENT INTELLIGENCE / RAG - INTERNSHIP REQUIREMENT TEST PACK
+===============================================================
+
+PURPOSE
+-------
+Use this document as a test corpus for the locally running Document Intelligence /
+RAG application. Upload this TXT file into the application and use the questions
+below to verify ingestion, chunking, embeddings, vector retrieval, reranking,
+generation, citations, multi-document behavior, and robustness.
+
+IMPORTANT
+---------
+This file intentionally contains facts that are easy to test and cross-check.
+The expected answer to each question is included so you can compare the
+application's response with the ground truth.
+
+If the application supports citations, the answer should cite the relevant
+section/chunk of this uploaded document. Do not accept an answer as fully
+correct if it gives the right-looking answer but cites an unrelated source.
+
+TEST DOCUMENT
+-------------
+
+Title: Orion Document Intelligence System - Evaluation Corpus
+
+Section 1: Company Overview
+---------------------------
+Orion Analytics is a fictional company created for evaluating a document
+intelligence application. It was founded in 2018 and is headquartered in Pune,
+India.
+
+The company has three product groups:
+1. Document Intelligence
+2. Data Analytics
+3. Workflow Automation
+
+The Document Intelligence team maintains the Orion RAG Platform. The platform
+is designed to answer questions over internal documents and provide source
+citations for factual claims.
+
+Section 2: Product and Architecture
+------------------------------------
+The Orion RAG Platform uses a five-stage retrieval pipeline:
+
+1. Document parsing
+2. Markdown-aware chunking
+3. Embedding generation
+4. Vector retrieval and reranking
+5. LLM answer generation with citations
+
+Documents are first converted into Markdown. The system preserves useful
+document metadata such as document ID, source filename, section heading, page
+number when available, and chunk ID.
+
+The vector database used by the fictional Orion platform is Qdrant.
+
+The generation layer is deliberately separated from retrieval. This allows the
+generation model to be changed without rewriting the ingestion or retrieval
+pipeline.
+
+Section 3: Ingestion Rules
+--------------------------
+Supported example document types include PDF, DOCX, PPTX, XLSX, and Markdown.
+
+The ingestion process should:
+- validate the uploaded file,
+- convert the document into Markdown,
+- normalize the extracted content,
+- split the content into meaningful chunks,
+- attach metadata to each chunk,
+- generate embeddings,
+- store vectors and metadata in the vector database.
+
+A chunk should ideally preserve its section or heading context. A naive fixed
+character slice is discouraged because it can separate related content and
+make source citations less useful.
+
+Section 4: Retrieval Rules
+--------------------------
+For a user question, the system first embeds the question and performs dense
+vector retrieval. The fictional Orion configuration retrieves up to 20
+candidate chunks.
+
+The candidates are then reranked. After reranking, the generation context is
+limited to the best 6 chunks.
+
+The reason for reranking is to improve precision after the initial retrieval
+stage. Dense retrieval is primarily responsible for finding a broad set of
+potentially relevant chunks, while reranking helps select the most relevant
+ones for the final context.
+
+Section 5: Citation Rules
+-------------------------
+Every retrieved chunk receives a stable citation ID such as C1, C2, C3, and so
+on.
+
+An answer should cite factual claims that depend on the supplied documents.
+For example:
+
+"The Orion RAG Platform uses Qdrant as its vector database. [C1]"
+
+Only citation IDs that were actually supplied to the model are valid.
+
+If the model produces [C99] when only C1 through C6 were supplied, the citation
+is invalid and should be rejected or corrected by citation validation.
+
+If the supplied documents do not contain enough information to answer a
+question, the preferred behavior is to clearly say that there is not enough
+information rather than inventing a fact.
+
+Section 6: Provider Abstraction
+-------------------------------
+The fictional platform uses provider interfaces so that embedding, reranking,
+and generation services can be replaced independently.
+
+The embedding interface exposes an operation conceptually equivalent to:
+
+embed(texts) -> vectors
+
+The generation interface exposes an operation conceptually equivalent to:
+
+generate(messages) -> answer
+
+Provider-specific code should remain behind adapter classes rather than being
+hard-coded throughout the RAG pipeline.
+
+Section 7: Reliability Rules
+----------------------------
+External model/API failures should be handled gracefully.
+
+Transient failures such as rate limiting, server errors, and network timeouts
+may be retried with bounded exponential backoff.
+
+Authentication failures and invalid requests should not be retried blindly.
+
+The application should return a useful error instead of crashing when a model
+provider is unavailable.
+
+Section 8: Evaluation Targets
+-----------------------------
+The platform should be evaluated on:
+- retrieval quality,
+- answer correctness,
+- citation faithfulness,
+- citation validity,
+- instruction following,
+- context handling,
+- latency,
+- provider reliability.
+
+A larger model should not automatically be considered the best model. The
+selection should be based on measured performance against the evaluation
+questions and practical constraints.
+
+Section 9: Deliberate Distractors
+---------------------------------
+The following facts are intentionally different from facts elsewhere in this
+document:
+
+A separate fictional project called Atlas was founded in 2021 in Bengaluru.
+Atlas uses Milvus rather than Qdrant and retrieves 10 candidates before
+reranking to 4 final chunks.
+
+These Atlas facts must NOT be attributed to the Orion RAG Platform.
+
+Section 10: Final Ground Truth
+------------------------------
+Orion:
+- Founded: 2018
+- Headquarters: Pune, India
+- Product groups: Document Intelligence, Data Analytics, Workflow Automation
+- Vector database: Qdrant
+- Initial retrieval candidates: 20
+- Final reranked context: 6 chunks
+- Pipeline: parsing -> chunking -> embeddings -> retrieval/reranking ->
+  generation/citations
+
+Atlas:
+- Founded: 2021
+- Headquarters: Bengaluru
+- Vector database: Milvus
+- Initial retrieval candidates: 10
+- Final reranked context: 4 chunks

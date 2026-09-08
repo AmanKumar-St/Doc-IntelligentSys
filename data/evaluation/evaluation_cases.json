@@ -1,0 +1,118 @@
+[
+  {
+    "id": "eval_01",
+    "task_type": "qa",
+    "question": "How many days of annual leave are employees allocated and what is the carryover policy?",
+    "expected_source": "employee_handbook.docx",
+    "reference_facts": ["22 days", "5 days", "carry forward", "March 31st"],
+    "history": []
+  },
+  {
+    "id": "eval_02",
+    "task_type": "qa",
+    "question": "What is the monthly internet subsidy allowance for remote workers?",
+    "expected_source": "employee_handbook.docx",
+    "reference_facts": ["$80", "month", "payroll"],
+    "history": []
+  },
+  {
+    "id": "eval_03",
+    "task_type": "qa",
+    "question": "What header format is required for authentication in the DocIntelligent Cloud API?",
+    "expected_source": "cloud_api_guide.pdf",
+    "reference_facts": ["Authorization", "Bearer", "doc_sec_live"],
+    "history": []
+  },
+  {
+    "id": "eval_04",
+    "task_type": "qa",
+    "question": "What rate limit is enforced on the standard tier and what HTTP status is returned when exceeded?",
+    "expected_source": "cloud_api_guide.pdf",
+    "reference_facts": ["120 requests", "5,000", "429", "Retry-After"],
+    "history": []
+  },
+  {
+    "id": "eval_05",
+    "task_type": "qa",
+    "question": "What was the Q3 ARR and the Enterprise SaaS Year-over-Year growth rate?",
+    "expected_source": "q3_financial_report.md",
+    "reference_facts": ["$14.2M", "42%", "+48%", "9.8M"],
+    "history": []
+  },
+  {
+    "id": "eval_06",
+    "task_type": "summarization",
+    "question": "Summarize the key leave and remote work benefits from the employee handbook.",
+    "expected_source": "employee_handbook.docx",
+    "reference_facts": ["22 days", "hybrid", "$1,000", "$80"],
+    "summary_type": "key_points",
+    "history": []
+  },
+  {
+    "id": "eval_07",
+    "task_type": "summarization",
+    "question": "Provide a concise technical summary of the Cloud API architecture.",
+    "expected_source": "cloud_api_guide.pdf",
+    "reference_facts": ["Bearer", "120", "webhook", "HMAC"],
+    "summary_type": "concise",
+    "history": []
+  },
+  {
+    "id": "eval_08",
+    "task_type": "extraction",
+    "question": "Extract the annual leave days, carryover limit, and sick leave days.",
+    "expected_source": "employee_handbook.docx",
+    "target_fields": ["annual_leave_days", "carryover_limit", "sick_leave_days", "bonus_percentage"],
+    "reference_facts": ["22", "5", "12"],
+    "history": []
+  },
+  {
+    "id": "eval_09",
+    "task_type": "extraction",
+    "question": "Extract total ARR, gross margin, and developer API growth rate.",
+    "expected_source": "q3_financial_report.md",
+    "target_fields": ["arr", "gross_margin", "developer_api_growth", "ebitda_target"],
+    "reference_facts": ["14.2", "81.4", "65"],
+    "history": []
+  },
+  {
+    "id": "eval_10",
+    "task_type": "classification",
+    "question": "Classify the topic and document type of this guide.",
+    "expected_source": "cloud_api_guide.pdf",
+    "allowed_categories": ["HR Policy", "Technical Documentation", "Financial Report", "Legal Contract"],
+    "expected_category": "Technical Documentation",
+    "reference_facts": ["Technical Documentation"],
+    "history": []
+  },
+  {
+    "id": "eval_11",
+    "task_type": "classification",
+    "question": "Classify the content of the Q3 performance report.",
+    "expected_source": "q3_financial_report.md",
+    "allowed_categories": ["HR Policy", "Technical Documentation", "Financial Report", "Other"],
+    "expected_category": "Financial Report",
+    "reference_facts": ["Financial Report"],
+    "history": []
+  },
+  {
+    "id": "eval_12",
+    "task_type": "generation",
+    "question": "Generate an executive update email summarizing Q3 financial performance for company leadership.",
+    "expected_source": "q3_financial_report.md",
+    "output_format": "email",
+    "reference_facts": ["14.2M", "42%", "81.4%"],
+    "history": []
+  },
+  {
+    "id": "eval_13",
+    "task_type": "qa",
+    "question": "How much can be carried over into the next year?",
+    "expected_source": "employee_handbook.docx",
+    "reference_facts": ["5 days", "March 31st"],
+    "history": [
+      {"role": "user", "content": "What is the annual leave policy for employees?"},
+      {"role": "assistant", "content": "Full-time employees receive 22 days of paid annual leave per calendar year [C1]."}
+    ]
+  }
+]

@@ -1,0 +1,221 @@
+{
+  "total_tests": 13,
+  "retrieval_relevance_pct": 100.0,
+  "answer_relevance_pct": 84.6,
+  "factuality_pct": 100.0,
+  "consistency_pct": 100.0,
+  "citation_validity_pct": 100.0,
+  "overall_pass_pct": 84.6,
+  "avg_latency_sec": 11.6,
+  "results": [
+    {
+      "test_id": "eval_01",
+      "task": "qa",
+      "question": "How many days of annual leave are employees allocated and what is the carryover policy?",
+      "expected_source": "employee_handbook.docx",
+      "retrieved_sources": [
+        "employee_handbook.docx"
+      ],
+      "relevance": "PASS",
+      "factuality": "SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "PASS",
+      "latency_sec": 5.82,
+      "answer_preview": "All full-time employees are allocated 22 days of paid annual leave per calendar year [C1] [C2] [C3] [C4] [C5]. Employees..."
+    },
+    {
+      "test_id": "eval_02",
+      "task": "qa",
+      "question": "What is the monthly internet subsidy allowance for remote workers?",
+      "expected_source": "employee_handbook.docx",
+      "retrieved_sources": [
+        "employee_handbook.docx"
+      ],
+      "relevance": "PASS",
+      "factuality": "SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "PASS",
+      "latency_sec": 5.33,
+      "answer_preview": "The monthly internet subsidy allowance for remote workers is $80 per month [C1] [C2] [C3] [C4] [C5]...."
+    },
+    {
+      "test_id": "eval_03",
+      "task": "qa",
+      "question": "What header format is required for authentication in the DocIntelligent Cloud API?",
+      "expected_source": "cloud_api_guide.pdf",
+      "retrieved_sources": [
+        "cloud_api_guide.pdf"
+      ],
+      "relevance": "PASS",
+      "factuality": "SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "PASS",
+      "latency_sec": 7.37,
+      "answer_preview": "The required header format for authentication in the DocIntelligent Cloud API is the HTTP Authorization header with a Be..."
+    },
+    {
+      "test_id": "eval_04",
+      "task": "qa",
+      "question": "What rate limit is enforced on the standard tier and what HTTP status is returned when exceeded?",
+      "expected_source": "cloud_api_guide.pdf",
+      "retrieved_sources": [
+        "cloud_api_guide.pdf"
+      ],
+      "relevance": "PASS",
+      "factuality": "SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "PASS",
+      "latency_sec": 40.96,
+      "answer_preview": "The standard tier enforces a rate limit of 120 requests per minute per IP address and 5,000 total document queries per d..."
+    },
+    {
+      "test_id": "eval_05",
+      "task": "qa",
+      "question": "What was the Q3 ARR and the Enterprise SaaS Year-over-Year growth rate?",
+      "expected_source": "q3_financial_report.md",
+      "retrieved_sources": [
+        "q3_financial_report.md"
+      ],
+      "relevance": "FAIL",
+      "factuality": "SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "FAIL",
+      "latency_sec": 27.96,
+      "answer_preview": "The DocIntelligent Platform reached $14.2M in Annual Recurring Revenue (ARR) in Q3 [C1] [C2] [C3] [C4] [C5]. The Enterpr..."
+    },
+    {
+      "test_id": "eval_06",
+      "task": "summarization",
+      "question": "Summarize the key leave and remote work benefits from the employee handbook.",
+      "expected_source": "employee_handbook.docx",
+      "retrieved_sources": [
+        "employee_handbook.docx"
+      ],
+      "relevance": "PASS",
+      "factuality": "SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "PASS",
+      "latency_sec": 9.42,
+      "answer_preview": "Here are the key points summarizing the leave and remote work benefits from the employee handbook:\n\n* Full-time employee..."
+    },
+    {
+      "test_id": "eval_07",
+      "task": "summarization",
+      "question": "Provide a concise technical summary of the Cloud API architecture.",
+      "expected_source": "cloud_api_guide.pdf",
+      "retrieved_sources": [
+        "cloud_api_guide.pdf"
+      ],
+      "relevance": "PASS",
+      "factuality": "SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "PASS",
+      "latency_sec": 12.8,
+      "answer_preview": "Here is a concise technical summary of the Cloud API architecture:\n\nThe DocIntelligent Cloud API requires a Bearer Token..."
+    },
+    {
+      "test_id": "eval_08",
+      "task": "extraction",
+      "question": "Extract the annual leave days, carryover limit, and sick leave days.",
+      "expected_source": "employee_handbook.docx",
+      "retrieved_sources": [
+        "employee_handbook.docx"
+      ],
+      "relevance": "PASS",
+      "factuality": "PARTIALLY_SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "PASS",
+      "latency_sec": 5.33,
+      "answer_preview": "{\n  \"annual_leave_days\": \"22\",\n  \"carryover_limit\": \"5\",\n  \"sick_leave_days\": \"12\",\n  \"bonus_percentage\": null,\n  \"_cita..."
+    },
+    {
+      "test_id": "eval_09",
+      "task": "extraction",
+      "question": "Extract total ARR, gross margin, and developer API growth rate.",
+      "expected_source": "q3_financial_report.md",
+      "retrieved_sources": [
+        "q3_financial_report.md"
+      ],
+      "relevance": "PASS",
+      "factuality": "SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "PASS",
+      "latency_sec": 7.37,
+      "answer_preview": "```json\n{\n  \"arr\": \"$14.2M\",\n  \"gross_margin\": \"81.4%\",\n  \"developer_api_growth\": \"+65%\",\n  \"ebitda_target\": null,\n  \"_c..."
+    },
+    {
+      "test_id": "eval_10",
+      "task": "classification",
+      "question": "Classify the topic and document type of this guide.",
+      "expected_source": "cloud_api_guide.pdf",
+      "retrieved_sources": [
+        "sample business report.pdf",
+        "cloud_api_guide.pdf"
+      ],
+      "relevance": "PASS",
+      "factuality": "SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "PASS",
+      "latency_sec": 5.43,
+      "answer_preview": "```json\n{\n  \"category\": \"Technical Documentation\",\n  \"confidence\": 0.9,\n  \"explanation\": \"The document context includes ..."
+    },
+    {
+      "test_id": "eval_11",
+      "task": "classification",
+      "question": "Classify the content of the Q3 performance report.",
+      "expected_source": "q3_financial_report.md",
+      "retrieved_sources": [
+        "q3_financial_report.md"
+      ],
+      "relevance": "PASS",
+      "factuality": "PARTIALLY_SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "PASS",
+      "latency_sec": 7.37,
+      "answer_preview": "```json\n{\n  \"category\": \"Financial Report\",\n  \"confidence\": 0.95,\n  \"explanation\": \"The document context contains financ..."
+    },
+    {
+      "test_id": "eval_12",
+      "task": "generation",
+      "question": "Generate an executive update email summarizing Q3 financial performance for company leadership.",
+      "expected_source": "q3_financial_report.md",
+      "retrieved_sources": [
+        "q3_financial_report.md"
+      ],
+      "relevance": "PASS",
+      "factuality": "SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "PASS",
+      "latency_sec": 11.06,
+      "answer_preview": "Subject: Q3 Financial Performance Update for Executive Leadership\n\nDear Executive Team,\n\nI am writing to provide a summa..."
+    },
+    {
+      "test_id": "eval_13",
+      "task": "qa",
+      "question": "How much can be carried over into the next year?",
+      "expected_source": "employee_handbook.docx",
+      "retrieved_sources": [
+        "employee_handbook.docx"
+      ],
+      "relevance": "FAIL",
+      "factuality": "SUPPORTED",
+      "consistency": "PASS",
+      "citation_valid": "PASS",
+      "overall_pass": "FAIL",
+      "latency_sec": 4.61,
+      "answer_preview": "Employees may carry forward a maximum of 5 unused leave days into the next calendar year [C1] [C2] [C3] [C4] [C5]...."
+    }
+  ]
+}

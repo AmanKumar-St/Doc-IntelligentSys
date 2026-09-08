@@ -10,9 +10,10 @@ class CitationValidator:
 
     @staticmethod
     def extract_citation_ids(text: str) -> set[str]:
-        """Extracts all citation identifiers like 'C1', 'C2' from text format [C1], [C2]."""
+        """Extracts all citation identifiers like 'C1', 'C2' from text format [C1], [C2] or JSON arrays."""
         matches = re.findall(r"\[(C\d+)\]", text)
-        return set(matches)
+        json_matches = re.findall(r'"(C\d+)"', text)
+        return set(matches).union(set(json_matches))
 
     @staticmethod
     def validate_and_map_citations(
@@ -20,13 +21,6 @@ class CitationValidator:
         context_chunks: list[Chunk],
         strict: bool = False,
     ) -> tuple[str, list[Citation], str]:
-        """
-        Validates citations in the answer against context chunks.
-        Returns:
-            - cleaned_answer: processed answer text
-            - citations: list of matched Citation domain objects
-            - status: "valid" | "cleaned_invalid" | "unverified"
-        """
         valid_chunk_map: dict[str, Chunk] = {
             c.citation_id: c for c in context_chunks if c.citation_id
         }
@@ -42,16 +36,14 @@ class CitationValidator:
             if strict:
                 raise CitationValidationError(msg)
             
-            # Remove hallucinated citation tags from text
             cleaned_text = answer_text
             for invalid_id in invalid_ids:
                 cleaned_text = re.sub(rf"\[{invalid_id}\]", "", cleaned_text)
-            # Normalize excessive spaces created by removal
+                cleaned_text = re.sub(rf'"{invalid_id}",?', "", cleaned_text)
             cleaned_text = re.sub(r" {2,}", " ", cleaned_text).strip()
             answer_text = cleaned_text
             status = "cleaned_invalid"
 
-        # Build Citation objects for all valid cited chunks
         matched_citations: list[Citation] = []
         for cid in sorted(list(used_ids.intersection(valid_ids)), key=lambda x: int(x[1:])):
             chunk = valid_chunk_map[cid]
@@ -70,9 +62,7 @@ class CitationValidator:
                 )
             )
 
-        # If answer mentions no citations but context was provided and answer is affirmative
         if not matched_citations and context_chunks and "couldn't find enough information" not in answer_text.lower():
-            # Include top 1-2 chunks as background references with status unverified
             for c in context_chunks[:2]:
                 if c.citation_id:
                     matched_citations.append(
