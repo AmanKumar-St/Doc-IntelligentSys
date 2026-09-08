@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: doc-intelligence-backend
+    rootDir: backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: FRONTEND_URL
+        sync: false
+      - key: MAX_UPLOAD_SIZE_MB
+        value: "10"
+      - key: MAX_QUERY_LENGTH
+        value: "2000"
+      - key: MAX_CHAT_MESSAGE_LENGTH
+        value: "4000"
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+      - key: UPLOAD_RATE_LIMIT
+        value: "5"
+      - key: UPLOAD_RATE_WINDOW_SECONDS
+        value: "3600"
+      - key: CHAT_RATE_LIMIT
+        value: "30"
+      - key: CHAT_RATE_WINDOW_SECONDS
+        value: "3600"
+      - key: SEARCH_RATE_LIMIT
+        value: "60"
+      - key: SEARCH_RATE_WINDOW_SECONDS
+        value: "3600"
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: USE_EMBEDDED_QDRANT
+        value: "false"
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: CODECRAFT_API_KEY
+        sync: false
+      - key: UNOROUTER_API_KEY
+        sync: false

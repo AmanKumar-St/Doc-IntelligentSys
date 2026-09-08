@@ -12,8 +12,12 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
 
+    # CORS
+    frontend_url: str = "http://localhost:5173"
+
     # Vector DB
     qdrant_url: str = "http://localhost:6333"
+    qdrant_api_key: str | None = None
     qdrant_storage_path: str = "./data/qdrant_db"
     qdrant_collection: str = "documents"
     use_embedded_qdrant: bool = True
@@ -21,6 +25,23 @@ class Settings(BaseSettings):
     # Storage Paths
     upload_dir: str = "./data/uploads"
     markdown_dir: str = "./data/markdown"
+
+    # File Upload Limits
+    max_upload_size_mb: int = 10
+    allowed_file_extensions: str = ".pdf,.docx,.doc,.txt,.md,.markdown,.xlsx,.xls,.pptx,.ppt,.csv,.json,.html,.htm,.xml,.rtf,.odt,.ods,.odp"
+
+    # Request Body Limits
+    max_query_length: int = 2000
+    max_chat_message_length: int = 4000
+
+    # Rate Limiting
+    rate_limit_enabled: bool = True
+    upload_rate_limit: int = 5
+    upload_rate_window_seconds: int = 3600
+    chat_rate_limit: int = 30
+    chat_rate_window_seconds: int = 3600
+    search_rate_limit: int = 60
+    search_rate_window_seconds: int = 3600
 
     # Embeddings
     embedding_provider: str = "openrouter"

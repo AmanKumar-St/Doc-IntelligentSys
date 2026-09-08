@@ -1,4 +1,5 @@
 import json
+import warnings
 from pathlib import Path
 from typing import Any
 from app.core.config import Settings, get_settings
@@ -15,6 +16,16 @@ class FileStorage:
 
         self.upload_dir.mkdir(parents=True, exist_ok=True)
         self.markdown_dir.mkdir(parents=True, exist_ok=True)
+        
+        if self.settings.environment == "production":
+            warnings.warn(
+                "FileStorage is using local filesystem which is EPHEMERAL on Render Free tier. "
+                "Uploaded files and markdown will be lost on service restart or sleep. "
+                "Configure persistent storage (e.g., S3, GCS) for production use.",
+                UserWarning,
+                stacklevel=2,
+            )
+
         self._init_catalog()
 
     def _init_catalog(self) -> None:

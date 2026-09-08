@@ -17,21 +17,29 @@ class QdrantStorage:
         self.ensure_collection_exists()
 
     def _init_client(self) -> QdrantClient:
-        # Check if embedded mode is requested or fallback if remote fails
+        # Check if embedded mode is requested
         if self.settings.use_embedded_qdrant:
             storage_path = Path(self.settings.qdrant_storage_path)
             storage_path.mkdir(parents=True, exist_ok=True)
             logger.info(f"Initializing embedded Qdrant client at {storage_path.resolve()}")
             return QdrantClient(path=str(storage_path))
         
+        # Production mode with external Qdrant (Qdrant Cloud)
         try:
             logger.info(f"Connecting to Qdrant at {self.settings.qdrant_url}")
-            client = QdrantClient(url=self.settings.qdrant_url, timeout=5.0)
+            client = QdrantClient(
+                url=self.settings.qdrant_url,
+                api_key=self.settings.qdrant_api_key,
+                timeout=30.0,
+            )
             client.get_collections()
             return client
         except Exception as e:
+            logger.error(f"Could not connect to Qdrant at {self.settings.qdrant_url}: {e}")
+            if self.settings.environment == "production":
+                raise VectorStorageError(f"Failed to connect to Qdrant: {str(e)}") from e
+            
             logger.warning(
-                f"Could not connect to Qdrant at {self.settings.qdrant_url} ({e}). "
                 f"Falling back to embedded local storage at {self.settings.qdrant_storage_path}"
             )
             storage_path = Path(self.settings.qdrant_storage_path)

@@ -108,6 +108,8 @@ The platform provides multi-format document ingestion, dense vector retrieval wi
 
 ```bash
 # Start FastAPI backend at http://localhost:8000
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --reload --port 8000
+or if virtual environment exist
 uvicorn app.main:app --app-dir backend --reload --port 8000
 ```
 Interactive API documentation available at `http://localhost:8000/docs`.
