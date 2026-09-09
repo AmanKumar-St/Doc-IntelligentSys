@@ -43,7 +43,7 @@ Or use embedded mode (default) which requires no separate Qdrant instance.
 ### 4. Start the Backend
 
 ```bash
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
 
 The API will be available at:
@@ -131,7 +131,7 @@ Tests use mock providers by default and don't require external API keys or Qdran
    - **Root Directory**: `backend`
    - **Runtime**: `Python 3`
    - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
    - **Health Check Path**: `/api/health`
 
 ### 2. Set Environment Variables in Render Dashboard
@@ -141,11 +141,11 @@ Go to **Environment** tab and add:
 **Required for Production:**
 ```
 ENVIRONMENT=production
-FRONTEND_URL=https://your-frontend.vercel.app
-QDRANT_URL=https://your-cluster.qdrant.io
-QDRANT_API_KEY=your-qdrant-api-key
+FRONTEND_URL=https://doc-intelligent-sys.vercel.app
+QDRANT_URL=https://e9edec85-6617-49bf-b299-032dfb818357.australia-southeast1-0.gcp.cloud.qdrant.io:6333
+QDRANT_API_KEY=<your-qdrant-api-key>
 USE_EMBEDDED_QDRANT=false
-OPENROUTER_API_KEY=your-openrouter-key
+OPENROUTER_API_KEY=<your-openrouter-key>
 ```
 
 **Optional (defaults shown):**
@@ -197,8 +197,8 @@ Click **Create Web Service**. Render will build and deploy automatically.
 
 Set these environment variables in Render:
 ```
-QDRANT_URL=https://your-cluster.qdrant.io
-QDRANT_API_KEY=your-api-key
+QDRANT_URL=https://e9edec85-6617-49bf-b299-032dfb818357.australia-southeast1-0.gcp.cloud.qdrant.io:6333
+QDRANT_API_KEY=<your-qdrant-api-key>
 USE_EMBEDDED_QDRANT=false
 ```
 

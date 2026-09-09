@@ -59,7 +59,10 @@ out/
 Thumbs.db
 
 # Runtime Data & Storage
+backend/data/qdrant_db/
+backend/data/markdown/
+backend/data/uploads/
 data/qdrant_db/
-data/markdown/doc_*
-data/uploads/doc_*
+data/markdown/
+data/uploads/
 

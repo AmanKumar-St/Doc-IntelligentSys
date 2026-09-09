@@ -4,13 +4,13 @@ services:
     rootDir: backend
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     envVars:
       - key: ENVIRONMENT
         value: production
       - key: FRONTEND_URL
-        sync: false
+        value: https://doc-intelligent-sys.vercel.app
       - key: MAX_UPLOAD_SIZE_MB
         value: "10"
       - key: MAX_QUERY_LENGTH
@@ -32,7 +32,7 @@ services:
       - key: SEARCH_RATE_WINDOW_SECONDS
         value: "3600"
       - key: QDRANT_URL
-        sync: false
+        value: https://e9edec85-6617-49bf-b299-032dfb818357.australia-southeast1-0.gcp.cloud.qdrant.io:6333
       - key: QDRANT_API_KEY
         sync: false
       - key: USE_EMBEDDED_QDRANT
