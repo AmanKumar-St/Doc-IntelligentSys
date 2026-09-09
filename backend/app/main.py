@@ -74,22 +74,46 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Rate limiting middleware
+app.add_middleware(RateLimitMiddleware)
+
 # CORS configuration
-allowed_origins = [settings.frontend_url] if settings.frontend_url else []
-if settings.environment == "development":
-    allowed_origins.append("http://localhost:5173")
-    allowed_origins.append("http://localhost:3000")
+def _get_allowed_origins() -> list[str]:
+    cors_raw = getattr(settings, "cors_origins", None) or getattr(settings, "frontend_url", None) or "*"
+    if cors_raw == "*":
+        return ["*"]
+
+    origins = []
+    for url in cors_raw.split(","):
+        cleaned = url.strip().rstrip("/")
+        if cleaned:
+            origins.append(cleaned)
+
+    # Always ensure standard origins are present
+    defaults = [
+        "https://doc-intelligent-sys.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000",
+    ]
+    for d in defaults:
+        if d not in origins:
+            origins.append(d)
+    return origins
+
+
+allowed_origins = _get_allowed_origins()
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app" if "*" not in allowed_origins else None,
     allow_credentials=False,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
-
-# Rate limiting middleware
-app.add_middleware(RateLimitMiddleware)
 
 # Register exception handlers
 register_exception_handlers(app)

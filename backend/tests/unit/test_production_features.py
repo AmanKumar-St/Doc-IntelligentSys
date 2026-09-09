@@ -88,6 +88,14 @@ class TestCORSConfiguration:
         )
         assert response.status_code == 200
 
+    def test_cors_allows_vercel_origin(self):
+        response = client.options(
+            "/api/health",
+            headers={"Origin": "https://doc-intelligent-sys.vercel.app", "Access-Control-Request-Method": "GET"}
+        )
+        assert response.status_code == 200
+        assert "access-control-allow-origin" in response.headers
+
 
 class TestFileUploadValidation:
     def test_oversized_upload_rejected(self):

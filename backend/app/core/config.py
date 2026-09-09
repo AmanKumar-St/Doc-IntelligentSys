@@ -13,7 +13,8 @@ class Settings(BaseSettings):
     port: int = 8000
 
     # CORS
-    frontend_url: str = "http://localhost:5173"
+    frontend_url: str = "*"
+    cors_origins: str = "*"
 
     # Vector DB
     qdrant_url: str = "http://localhost:6333"
