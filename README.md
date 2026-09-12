@@ -154,7 +154,7 @@ The platform provides multi-format document ingestion, dense vector retrieval wi
    USE_EMBEDDED_QDRANT=true
    QDRANT_STORAGE_PATH=./data/qdrant_db
    
-   # Models
+   # Models Examples
    EMBEDDING_PROVIDER=openrouter
    EMBEDDING_MODEL=text-embedding-3-small
    GENERATION_PROVIDER=openrouter

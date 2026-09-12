@@ -7,7 +7,7 @@ from app.core.logging import logger
 
 
 class OpenRouterEmbeddingProvider(EmbeddingProvider):
-    def __init__(self, api_key: str, base_url: str = "https://openrouter.ai/api/v1", model: str = "text-embedding-3-small", dimension: int = 1536):
+    def __init__(self, api_key: str, base_url: str = "https://openrouter.ai/api/v1", model: str = "nvidia/nemotron-3-embed-1b:free", dimension: int = 1536):
         self.client = AsyncOpenAI(
             api_key=api_key,
             base_url=base_url,
@@ -34,6 +34,7 @@ class OpenRouterEmbeddingProvider(EmbeddingProvider):
             response = await self.client.embeddings.create(
                 model=self.model,
                 input=texts,
+                encoding_format="float",
             )
             # Ensure sorted order matching input index
             sorted_items = sorted(response.data, key=lambda item: item.index)

@@ -7,7 +7,7 @@ from app.core.logging import logger
 
 
 class UnoRouterEmbeddingProvider(EmbeddingProvider):
-    def __init__(self, api_key: str, base_url: str = "https://api.unorouter.ai/v1", model: str = "text-embedding-3-small", dimension: int = 1536):
+    def __init__(self, api_key: str, base_url: str = "https://api.unorouter.ai/v1/chat/completions", model: str = "text-embedding-3-small", dimension: int = 1536):
         self.client = AsyncOpenAI(
             api_key=api_key,
             base_url=base_url,
@@ -32,6 +32,7 @@ class UnoRouterEmbeddingProvider(EmbeddingProvider):
             response = await self.client.embeddings.create(
                 model=self.model,
                 input=texts,
+                
             )
             sorted_items = sorted(response.data, key=lambda item: item.index)
             return [item.embedding for item in sorted_items]
