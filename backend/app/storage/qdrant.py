@@ -51,6 +51,28 @@ class QdrantStorage:
             collections = self.client.get_collections().collections
             exists = any(c.name == self.collection_name for c in collections)
             
+            if exists:
+                # Verify whether the existing collection's vector dimension matches current settings
+                try:
+                    coll_info = self.client.get_collection(self.collection_name)
+                    vectors_config = coll_info.config.params.vectors
+                    existing_dim = None
+                    if hasattr(vectors_config, "size"):
+                        existing_dim = vectors_config.size
+                    elif isinstance(vectors_config, dict):
+                        existing_dim = vectors_config.get("size")
+
+                    if existing_dim and existing_dim != self.dimension:
+                        logger.warning(
+                            f"Qdrant collection '{self.collection_name}' dimension mismatch: "
+                            f"existing={existing_dim}, required={self.dimension}. "
+                            f"Recreating collection to avoid vector shape errors..."
+                        )
+                        self.client.delete_collection(collection_name=self.collection_name)
+                        exists = False
+                except Exception as check_err:
+                    logger.warning(f"Could not verify existing Qdrant collection dimension: {check_err}")
+
             if not exists:
                 logger.info(
                     f"Creating Qdrant collection '{self.collection_name}' with vector size {self.dimension}"
@@ -63,19 +85,23 @@ class QdrantStorage:
                     ),
                 )
                 if not self.settings.use_embedded_qdrant:
-                    self.client.create_payload_index(
-                        collection_name=self.collection_name,
-                        field_name="document_id",
-                        field_schema=rest_models.PayloadSchemaType.KEYWORD,
-                    )
-                    self.client.create_payload_index(
-                        collection_name=self.collection_name,
-                        field_name="source",
-                        field_schema=rest_models.PayloadSchemaType.KEYWORD,
-                    )
+                    try:
+                        self.client.create_payload_index(
+                            collection_name=self.collection_name,
+                            field_name="document_id",
+                            field_schema=rest_models.PayloadSchemaType.KEYWORD,
+                        )
+                        self.client.create_payload_index(
+                            collection_name=self.collection_name,
+                            field_name="source",
+                            field_schema=rest_models.PayloadSchemaType.KEYWORD,
+                        )
+                    except Exception:
+                        pass
         except Exception as e:
             logger.error(f"Error ensuring Qdrant collection: {e}")
             raise VectorStorageError(f"Qdrant collection setup error: {str(e)}") from e
+
 
     def upsert_chunks(self, chunks: list[Chunk], vectors: list[list[float]]) -> None:
         if not chunks or not vectors:

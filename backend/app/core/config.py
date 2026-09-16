@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
-from pydantic import AliasChoices, Field
+from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -46,18 +46,18 @@ class Settings(BaseSettings):
 
     # Embeddings
     embedding_provider: str = "openrouter"
-    embedding_model: str = "text-embedding-3-small"
-    embedding_dimension: int = 1536
+    embedding_model: str = "nvidia/nemotron-3-embed-1b:free"
+    embedding_dimension: int = 2048
 
     # Reranker
     reranker_provider: str = "openrouter"
-    reranker_model: str = "mistralai/mistral-7b-instruct:free"
+    reranker_model: str = "nvidia/nemotron-3-ultra-550b-a55b:free"
 
     # Generation
     generation_provider: str = "openrouter"
-    generation_model: str = "meta-llama/llama-3.3-70b-instruct:free"
-    generation_fallback_provider: str | None = "codecraft"
-    generation_fallback_model: str | None = "gpt-4o-mini"
+    generation_model: str = "nvidia/nemotron-3-ultra-550b-a55b:free"
+    generation_fallback_provider: str | None = "openrouter"
+    generation_fallback_model: str | None = "openrouter/free"
 
     # API Keys with alias support for multiple casing formats
     codecraft_api_key: str | None = Field(
@@ -76,7 +76,7 @@ class Settings(BaseSettings):
         default=None,
         validation_alias=AliasChoices("UNOROUTER_API_KEY", "UNOROUTER_KEY", "UNOROUTER-KEY"),
     )
-    unorouter_base_url: str = "https://api.unorouter.ai/v1"
+    unorouter_base_url: str = "https://api.unorouter.com/v1"
 
     # RAG Parameters
     top_k: int = 20
@@ -87,8 +87,29 @@ class Settings(BaseSettings):
     temperature: float = 0.1
     max_output_tokens: int = 1500
 
+    @field_validator("openrouter_api_key", "codecraft_api_key", "unorouter_api_key", "qdrant_api_key", mode="before")
+    @classmethod
+    def _strip_keys(cls, v: str | None) -> str | None:
+        if isinstance(v, str):
+            v = v.strip()
+            return v if v else None
+        return v
+
+    @field_validator("openrouter_base_url", "codecraft_base_url", "unorouter_base_url", mode="before")
+    @classmethod
+    def _sanitize_base_urls(cls, v: str | None) -> str | None:
+        if not v or not isinstance(v, str):
+            return v
+        v = v.strip().rstrip("/")
+        # If user accidentally provided full completions or embeddings endpoint, strip it
+        suffixes_to_strip = ["/chat/completions", "/embeddings", "/models"]
+        for suffix in suffixes_to_strip:
+            if v.endswith(suffix):
+                v = v[: -len(suffix)].rstrip("/")
+        return v
+
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(".env", "../.env"),
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -97,3 +118,4 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+

@@ -37,9 +37,29 @@ services:
         sync: false
       - key: USE_EMBEDDED_QDRANT
         value: "false"
+      - key: EMBEDDING_PROVIDER
+        value: openrouter
+      - key: EMBEDDING_MODEL
+        value: nvidia/nemotron-3-embed-1b:free
+      - key: EMBEDDING_DIMENSION
+        value: "2048"
+      - key: RERANKER_PROVIDER
+        value: openrouter
+      - key: RERANKER_MODEL
+        value: nvidia/nemotron-3-ultra-550b-a55b:free
+      - key: GENERATION_PROVIDER
+        value: openrouter
+      - key: GENERATION_MODEL
+        value: nvidia/nemotron-3-ultra-550b-a55b:free
+      - key: GENERATION_FALLBACK_PROVIDER
+        value: openrouter
+      - key: GENERATION_FALLBACK_MODEL
+        value: openrouter/free
       - key: OPENROUTER_API_KEY
         sync: false
       - key: CODECRAFT_API_KEY
         sync: false
       - key: UNOROUTER_API_KEY
         sync: false
+      - key: UNOROUTER_BASE_URL
+        value: https://api.unorouter.com/v1
